@@ -1,0 +1,18 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.rc_root {
+  background-color: transparent !important; /* Your custom styles */
+  border: 2px solid transparent !important;
+  border-radius: 10px !important;
+  font-size: 1.2rem !important;
+}
+
+.dark .rbc-toolbar button {
+  border: transparent !important;
+}
+
+.dark .rbc-time-view {
+  border: transparent !important;
+}
