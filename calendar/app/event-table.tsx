@@ -88,12 +88,6 @@ export const MyCalendar = () => {
         defaultView="month"
         view={currentView}
         events={events}
-        eventWrapper={(props: any) => {
-          // Customize the class names as needed
-          const updatedClassName = `${props.className} custom-event-container`;
-
-          return <div {...props} className={updatedClassName} />;
-        }}
         style={{ height: "400px", backgroundColor: "transparent" }}
         components={{
           toolbar: CustomToolbar,
