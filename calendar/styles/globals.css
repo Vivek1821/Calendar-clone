@@ -16,3 +16,15 @@
 .dark .rbc-time-view {
   border: transparent !important;
 }
+
+.dark .rbc-events-container {
+  background-color: transparent !important;
+}
+
+.dark .rbc-time-content > * + * > * {
+  border: transparent !important;
+}
+
+.dark .rbc-time-content {
+  border: none;
+}

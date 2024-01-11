@@ -12,6 +12,25 @@ interface MyCalendarProps {
 }
 
 const eventsData = [];
+
+const useDayPropGetter = (selectDate: Date | null) => {
+  const dayPropGetter = useCallback(
+    (date: Date, resource?: any) => {
+      if (selectDate && moment(date).isSame(selectDate, "day")) {
+        return {
+          style: {
+            backgroundColor: "lightblue",
+          },
+        };
+      }
+      return {};
+    },
+    [selectDate]
+  );
+
+  return { dayPropGetter };
+};
+
 export const MyCalendar = ({ selectDate }: MyCalendarProps) => {
   const [currentDate, setCurrentDate] = useState<Date>(new Date());
   const [events, setEvents] = useState<
@@ -30,6 +49,8 @@ export const MyCalendar = ({ selectDate }: MyCalendarProps) => {
       setCurrentDate(selectDate);
     }
   }, [selectDate]);
+
+  const { dayPropGetter } = useDayPropGetter(selectDate);
 
   const handleNavigate = (action: string) => {
     let newDate: Date;
@@ -119,6 +140,7 @@ export const MyCalendar = ({ selectDate }: MyCalendarProps) => {
   return (
     <div className="App bg-transparent">
       <Calendar
+        date={currentDate}
         localizer={localizer}
         defaultDate={new Date()}
         defaultView="month"
@@ -131,6 +153,7 @@ export const MyCalendar = ({ selectDate }: MyCalendarProps) => {
           toolbar: CustomToolbar,
         }}
         selectable={true}
+        dayPropGetter={dayPropGetter}
       />
     </div>
   );
