@@ -1,9 +1,23 @@
+// Sidebar.tsx
+"use client";
+import React from "react";
 import CalendarMini from "../../components/calendar";
 
-const Sidebar = () => {
+interface SidebarProps {
+  onDateClick: (date: Date) => void;
+  setSelectedDate: React.Dispatch<React.SetStateAction<Date | null>>;
+}
+
+const Sidebar: React.FC<SidebarProps> = ({ onDateClick, setSelectedDate }) => {
   return (
     <div>
-      <CalendarMini />
+      <CalendarMini
+        onDateClick={(date: Date) => {
+          console.log("Clicked date:", date);
+          onDateClick(date);
+          setSelectedDate(date);
+        }}
+      />
     </div>
   );
 };

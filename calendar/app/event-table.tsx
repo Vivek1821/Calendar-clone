@@ -1,47 +1,78 @@
+//event-table.tsx
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import moment from "moment";
-
+import ModalComponent from "@/components/modal";
 import "react-big-calendar/lib/css/react-big-calendar.css";
+import { useDisclosure } from "@nextui-org/modal";
 
-export const MyCalendar = () => {
+interface MyCalendarProps {
+  selectDate: Date | null;
+}
+
+const eventsData = [];
+export const MyCalendar = ({ selectDate }: MyCalendarProps) => {
   const [currentDate, setCurrentDate] = useState<Date>(new Date());
-  const [events, setEvents] = useState([
-    {
-      start: moment().toDate(),
-      end: moment().add(1, "days").toDate(),
-      title: "Some title",
-    },
-  ]);
+  const [events, setEvents] = useState<
+    { start: Date; end: Date; title: string }[]
+  >([]);
+
   const [activeButton, setActiveButton] = useState("today");
   const [currentView, setCurrentView] = useState<string>("month");
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
   const localizer = momentLocalizer(moment);
 
+  useEffect(() => {
+    if (selectDate) {
+      setCurrentView("day");
+      setCurrentDate(selectDate);
+    }
+  }, [selectDate]);
+
   const handleNavigate = (action: string) => {
-    let prevDate: Date;
+    let newDate: Date;
 
     switch (action) {
       case "PREV":
-        prevDate = new Date(currentDate.getTime() - 24 * 60 * 60 * 1000); // Subtract one day
+        newDate = selectDate
+          ? new Date(selectDate.getTime() - 24 * 60 * 60 * 1000)
+          : new Date(currentDate.getTime() - 24 * 60 * 60 * 1000);
+        // console.log(newDate);
         break;
       case "NEXT":
-        prevDate = new Date(currentDate.getTime() + 24 * 60 * 60 * 1000); // Add one day
+        newDate = moment(currentDate).add(1, "days").toDate();
+        // console.log(newDate);
         break;
       case "TODAY":
       default:
-        prevDate = new Date();
+        newDate = new Date();
         break;
     }
 
-    setCurrentDate(prevDate);
+    setCurrentDate(newDate);
+    console.log(currentDate);
     setActiveButton(action.toLowerCase());
   };
 
   const handleViewChange = (view: string) => {
     setCurrentView(view);
   };
+  const handleSelectSlot = useCallback(
+    ({ start, end }: { start: Date; end: Date }) => {
+      const title = window.prompt("New Event name");
+      if (title) {
+        setEvents((prev) => [...prev, { start, end, title }]);
+      }
+    },
+    [setEvents]
+  );
+
+  const handleSelectEvent = useCallback(
+    (event: any) => window.alert(event.title),
+    []
+  );
 
   const CustomToolbar = ({ label, onView }: any) => {
     return (
@@ -50,8 +81,13 @@ export const MyCalendar = () => {
         <button onClick={() => handleNavigate("PREV")}>Prev</button>
         <button onClick={() => handleNavigate("NEXT")}>Next</button>
         <span className="rbc-toolbar-label bg-transparent">
-          {moment(currentDate).format("MMMM DD, YYYY")}
+          {/* {moment(currentDate).format("MMMM DD, YYYY")} */}
+
+          {selectDate
+            ? moment(selectDate).format("MMMM DD, YYYY")
+            : moment(currentDate).format("MMMM DD, YYYY")}
         </span>
+
         <button
           className={currentView === "day" ? "active" : ""}
           onClick={() => handleViewChange("day")}
@@ -88,10 +124,13 @@ export const MyCalendar = () => {
         defaultView="month"
         view={currentView}
         events={events}
+        onSelectEvent={handleSelectEvent}
+        onSelectSlot={handleSelectSlot}
         style={{ height: "400px", backgroundColor: "transparent" }}
         components={{
           toolbar: CustomToolbar,
         }}
+        selectable={true}
       />
     </div>
   );
