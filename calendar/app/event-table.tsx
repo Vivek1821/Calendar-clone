@@ -11,7 +11,7 @@ interface MyCalendarProps {
   selectDate: Date | null;
 }
 
-const eventsData = [];
+// const eventsData = [];
 
 const useDayPropGetter = (selectDate: Date | null) => {
   const dayPropGetter = useCallback(
@@ -39,8 +39,7 @@ export const MyCalendar = ({ selectDate }: MyCalendarProps) => {
 
   const [activeButton, setActiveButton] = useState("today");
   const [currentView, setCurrentView] = useState<string>("month");
-  const { isOpen, onOpen, onOpenChange } = useDisclosure();
-
+  const { isOpen, onOpen, onClose, onOpenChange } = useDisclosure();
   const localizer = momentLocalizer(moment);
 
   useEffect(() => {
@@ -81,19 +80,22 @@ export const MyCalendar = ({ selectDate }: MyCalendarProps) => {
     setCurrentView(view);
   };
   const handleSelectSlot = useCallback(
-    ({ start, end }: { start: Date; end: Date }) => {
-      const title = window.prompt("New Event name");
-      if (title) {
-        setEvents((prev) => [...prev, { start, end, title }]);
-      }
+    // const title = window.prompt("New Event name");
+    // if (title) {
+    //   setEvents((prev) => [...prev, { title }]);
+    // }
+    (slotInfo: any) => {
+      // Check if the clicked slot has an event
+      onOpen();
+      console.log(slotInfo);
     },
-    [setEvents]
+    [onOpen]
   );
 
-  const handleSelectEvent = useCallback(
-    (event: any) => window.alert(event.title),
-    []
-  );
+  const handleSelectEvent = (event: any) => {
+    // Open the modal when an event is clicked
+    onOpen();
+  };
 
   const CustomToolbar = ({ label, onView }: any) => {
     return (
@@ -103,7 +105,6 @@ export const MyCalendar = ({ selectDate }: MyCalendarProps) => {
         <button onClick={() => handleNavigate("NEXT")}>Next</button>
         <span className="rbc-toolbar-label bg-transparent">
           {/* {moment(currentDate).format("MMMM DD, YYYY")} */}
-
           {selectDate
             ? moment(selectDate).format("MMMM DD, YYYY")
             : moment(currentDate).format("MMMM DD, YYYY")}
@@ -155,6 +156,7 @@ export const MyCalendar = ({ selectDate }: MyCalendarProps) => {
         selectable={true}
         dayPropGetter={dayPropGetter}
       />
+      {isOpen && <ModalComponent onClose={onClose} />}
     </div>
   );
 };

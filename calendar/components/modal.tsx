@@ -10,16 +10,20 @@ import {
 } from "@nextui-org/modal";
 import { Button } from "@nextui-org/button";
 
-export default function ModalComponent() {
+interface ModalComponentProps {
+  onClose: () => void;
+}
+
+const ModalComponent: React.FC<ModalComponentProps> = ({ onClose }) => {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [modalPlacement, setModalPlacement] = React.useState("auto");
 
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col gap-2" onClick={onOpen}>
       {/* <Button onPress={onOpen} className="max-w-fit">
         Open Modal
       </Button> */}
-      <Modal isOpen={isOpen} placement="center" onOpenChange={onOpenChange}>
+      <Modal isOpen={true} placement="center" onOpenChange={onClose}>
         <ModalContent>
           {(onClose) => (
             <>
@@ -52,4 +56,6 @@ export default function ModalComponent() {
       </Modal>
     </div>
   );
-}
+};
+
+export default ModalComponent;
